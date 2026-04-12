@@ -31,7 +31,14 @@ async function userRegistrationController(req, res) {
     expiresIn: "3d",
   });
   //now to set token in cookie using cookie-parse middleware
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true, //to prevent client side js to access this cookie for security,
+    secure: process.env.NODE_ENV === "production", //only send cookie over https in production
+    sameSite: "strict", //to prevent CSRF attacks
+    maxAge: 3 * 24 * 60 * 60 * 1000, //3 days in milliseconds
+  });
+
+  //gotta do for log out too, logout functonality not added yet
 
   res.status(201).json({
     user: {
@@ -70,16 +77,14 @@ async function userLoginController(req, res) {
   });
   //cookies now
   res.cookie("token", token);
-  return res.status(200).json(
-    {
-      user:{
-        _id: user._id,
+  return res.status(200).json({
+    user: {
+      _id: user._id,
       email: user.email,
       name: user.name,
-      },
-      token,
-    }
-  );
+    },
+    token,
+  });
 }
 
 module.exports = {
