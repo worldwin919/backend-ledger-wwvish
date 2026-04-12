@@ -1,8 +1,9 @@
 const transactionModel = require("../models/transaction.model");
 const ledgerModel = require("../models/ledger.model");
 const accountModel = require("../models/account.models");
+const userModel = require("../models/user.model");
 const mongoose = require("mongoose");
-
+const emailService = require("../services/email.service");
 /**
  * @desc Create a new transaction
  * 10 STEPS PROCESS
@@ -179,12 +180,22 @@ async function createTransaction(req, res, next) {
      *  skipping for now , need to add email service, node mailer
      */
 
+    //by now a sucessful transaction is done and we can send email to the user about the transaction
+    const user = await userModel.findById(fromUserAccount.user);
+    console.log("user = ", user);
+
+    await emailService.sendTransactionSuccessEmail(
+      user.email,
+      user.name,
+      amount,
+    );
     //transaction successful
     return res.status(200).json({
       message: "transaction completed sucessfully",
       transaction: transaction,
     });
   } catch (error) {
+    //means some error occured, so send the mail to user, no money was deducted or added, so no need to roll back anything, just send the email about failure
     next(error);
   }
 }
