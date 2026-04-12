@@ -1,2 +1,4 @@
 node_modules/
 .env
+todo.txt
+tests/test.txt

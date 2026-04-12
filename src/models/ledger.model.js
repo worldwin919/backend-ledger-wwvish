@@ -16,7 +16,7 @@ const ledgerSchema = new mongoose.Schema({
   transaction: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "transaction",
-    required: [true, "Ledger entry must be associated with a transaction"],
+    required: false, // Allow null for deposits
     index: true, //for faster queries
     immutable: true, //once set, cannnot be changes, single source of truth
   },
@@ -31,7 +31,7 @@ const ledgerSchema = new mongoose.Schema({
   },
 });
 
-function preventLedgerModifcation() {
+function preventLedgerModification() {
   throw new Error(
     "Ledger entries are immutable and cannot be modified or deleted after creation",
   );
