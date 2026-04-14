@@ -4,7 +4,8 @@ const authMiddleware = require("../middleware/auth.middleware");
 const validateRequest = require("../middleware/validation.middlware");
 const transactionRoutes = Router();
 const transactionController = require("../controllers/transaction.controller");
-
+const apiCache = require("apicache");
+const cache = apiCache.middleware; //caching for single instance
 /**
     @route POST /api/transactions/
     @desc Create a new transaction
@@ -34,6 +35,7 @@ transactionRoutes.post(
 transactionRoutes.get(
   "/",
   authMiddleware.authMiddleware,
+  cache("2 minutes"), //cache response for 2 min in memeory as single instsance for
   transactionController.getTransactionsController,
 );
 
