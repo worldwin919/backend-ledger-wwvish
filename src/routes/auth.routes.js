@@ -7,8 +7,9 @@ const router = express.Router();
 router.post(
   "/register",
   body("email").isEmail().withMessage("Valid email is required"),
-  body("password").isLength(
-    { min: 6 }).withMessage("Password must be at least 6 characters long"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long"),
   validateRequest,
   authController.userRegistrationController,
 );
@@ -21,5 +22,12 @@ router.post(
   validateRequest,
   authController.userLoginController,
 );
+
+/**
+ * POST /api/auth/logout
+ * This route will log out the user by blacklisting the token.
+ * It expects the token to be sent in the Authorization header as a Bearer token.
+ */
+router.post("/logout", authController.userLogOutController);
 
 module.exports = router;

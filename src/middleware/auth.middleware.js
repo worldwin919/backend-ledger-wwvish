@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model");
+const tokenBlackListModel = require("../models/blackList.model");
 const jwt = require("jsonwebtoken");
 
 //middle ware to check if the user is authenticated or not using token in the cookie
@@ -10,6 +11,17 @@ async function authMiddleware(req, res, next) {
   if (!token) {
     return res.status(401).json({
       message: "Unauthorized access , invalid token",
+    });
+  }
+
+  //check if token is blacklisted or not
+  const isBlackListenToken = await tokenBlackListModel.findOne({
+    token: token,
+  });
+
+  if (isBlackListenToken) {
+    return res.status(401).json({
+      message: "Unauthorized access, token is invalid",
     });
   }
 

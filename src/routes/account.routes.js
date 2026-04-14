@@ -5,6 +5,8 @@ const accountDetailsController = require("../controllers/accountdetails.controll
 const getAccountListController = require("../controllers/account.controller");
 const { param, body } = require("express-validator");
 const validateRequest = require("../middleware/validation.middlware");
+const apiCache = require("apicache");
+let cache = apiCache.middleware;//caching for single instance
 const router = express.Router();
 
 /**
@@ -26,6 +28,7 @@ router.post(
 router.get(
   "/",
   authMiddleware.authMiddleware,
+  cache("2 minutes"), //cache response for 2 min in memeory as single instsance for now
   getAccountListController.getAccountListController,
 );
 /**
